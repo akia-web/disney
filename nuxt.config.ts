@@ -18,6 +18,9 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
-    databaseUrl: ''
+    databaseUrl: '',
+    public: {
+      appVersion: process.env.npm_package_version
+    }
   }
 })

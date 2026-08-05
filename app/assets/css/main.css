@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+    --color-card-color: #191E63;
+    --color-gold: #FFE29B;
+}

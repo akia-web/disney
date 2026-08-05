@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  app_ddv:
+    build: .
+    container_name: app_ddv
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3003:3000"       # expose l’API sur le serveur
+    networks:
+      - ddv_network
+
+networks:
+  ddv_network:

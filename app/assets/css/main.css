@@ -4,3 +4,13 @@
     --color-card-color: #191E63;
     --color-gold: #FFE29B;
 }
+
+p, span, label, a, li, h3 {
+    font-family: "League Spartan", serif;
+}
+
+
+h1, h2 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: bold;
+}

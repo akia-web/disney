@@ -1,0 +1,8 @@
+model Dreamsnap {
+  id        Int      @id @default(autoincrement())
+  theme      String
+  moonlight  Int
+  rank       Int
+  image     String
+  date      DateTime
+}

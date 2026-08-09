@@ -1,5 +1,5 @@
 <template>
-  <div class="flex bg-white justify-between align-center items-center p-2.5 shadow-md">
+  <div class="flex bg-white/90 justify-between align-center items-center p-2.5 shadow-md">
     <NuxtLink to="/">
        <ClientOnly>
          <Icon name="mdi-light:home" />
@@ -7,24 +7,6 @@
     </NuxtLink>
 
       <div class="flex gap-6">
-        <NuxtLink :to="'/dreamsnap'">
-          <div class="flex items-center gap-2">
-             <ClientOnly>
-              <Icon name="mdi-light:picture" />  
-            </ClientOnly> 
-            <p>Dreamsnap</p>
-          </div>
-        </NuxtLink>
-
-        <NuxtLink :to="'/metiers'">
-          <div class="flex items-center gap-2">
-            <ClientOnly>
-              <Icon name="mdi-light:clipboard-text" />   
-            </ClientOnly>
-            <p>Métiers</p>
-          </div>
-        </NuxtLink>
-
         <NuxtLink :to="'/personnages'">
           <div class="flex items-center gap-2">
             <ClientOnly>

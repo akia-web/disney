@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-site min-h-100vh w-full">
+  <div class="bg-linear-to-b from-card-color to-card-color/70 min-h-100vh w-full">
     <header class="sticky top-0 z-50 ">
       <div>
         <LayoutAppNavBar />

@@ -1,13 +1,13 @@
 <template>
-    Personnages
+    <h1 class="text-lg text-gold font-bold">Personnages</h1>
 
     <div v-if="auth.user && auth.user.role==='ADMIN'"
             class="flex flex-row-reverse reactive">
-        <button class="border flex items-center p-2.5 gap-2"
+        <button class="border flex items-center p-2.5 gap-2 border-gold"
                 @click="openModal('Ajouter un personnage')">
-                <p>Ajouter</p>
+                <p class="text-gold">Ajouter</p>
                 <ClientOnly>
-                <Icon name="mdi-light:plus-circle" size="24"/>
+                <Icon name="mdi-light:plus-circle" class="text-gold" size="24"/>
                 </ClientOnly>          
         </button>
 
@@ -22,9 +22,9 @@
                         :jobsIcones="jobsIcons"/>
 
 
-    <div class="flex gap-4 flex-wrap justify-around after:flex-auto">
+    <div class="flex gap-4 flex-wrap justify-around">
         <div v-for="character in characters"
-            class="border rounded-lg min-w-50"
+            class="border rounded-lg min-w-50 bg-white/90 border-gold"
             @click="openModal('Modification', character)">
             <div class="flex justify-between bg-card-color pt-2.5 pb-2.5 rounded-tl-lg rounded-tr-lg">
                 <p class="pl-2 text-white font-bold">{{ character.name }}</p>

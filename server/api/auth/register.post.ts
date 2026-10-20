@@ -4,10 +4,11 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
     if (body.checked === undefined || body.checked === true || body.checked === undefined) {
-        return {
-            success: false,
-            message: 'Erreur'
-        }
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'Données invalides',
+            message: 'Veuillez vérifier les informations saisies.'
+        })
     }
 
     const searchUser = await prisma.user.findUnique({
@@ -16,12 +17,12 @@ export default defineEventHandler(async (event) => {
         }
     })
 
-
     if (searchUser) {
-        return {
-            success: false,
+        throw createError({
+            statusCode: 409,
+            statusMessage: 'Conflict',
             message: 'Utilisateur déjà existant'
-        }
+        })
     }
 
     const hashedPassword = await bcrypt.hash(body.password, 10)

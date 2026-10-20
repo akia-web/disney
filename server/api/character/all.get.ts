@@ -1,3 +1,4 @@
+
 import { Prisma } from "~/generated/prisma/client"
 
 export default defineEventHandler(async (event) => {
@@ -6,18 +7,25 @@ export default defineEventHandler(async (event) => {
     const search = String(query.search ?? '').trim()
     const job = String(query.job ?? '').trim()
 
-    let where: Prisma.CharacterWhereInput | undefined
+    const where: Prisma.CharacterWhereInput = {}
 
     if (job) {
-        where = {
-            job
-        }
-    } else if (search) {
-        where = {
-            name: {
-                contains: search,
-                mode: 'insensitive'
+        where.characterUsers = {
+            some: {
+                job: {
+                    name: {
+                        equals: job,
+                        mode: 'insensitive'
+                    }
+                }
             }
+        }
+    }
+
+    if (search) {
+        where.name = {
+            contains: search,
+            mode: 'insensitive'
         }
     }
 

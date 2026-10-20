@@ -5,4 +5,6 @@ model Dreamsnap {
   rank       Int
   image     String
   date      DateTime
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }

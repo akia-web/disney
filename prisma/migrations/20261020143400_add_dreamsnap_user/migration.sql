@@ -1,0 +1,12 @@
+ALTER TABLE "Dreamsnap"
+ADD COLUMN "userId" INTEGER;
+
+ALTER TABLE "Dreamsnap"
+ADD CONSTRAINT "Dreamsnap_userId_fkey"
+FOREIGN KEY ("userId")
+REFERENCES "User"("id")
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+ALTER TABLE "Dreamsnap"
+ALTER COLUMN "userId" DROP DEFAULT;

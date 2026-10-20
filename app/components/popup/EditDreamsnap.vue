@@ -62,8 +62,11 @@
                 <input type="date"
                 v-model="form.date"
                 class="border p-2 rounded-lg">
+
+                  <UiImageInput :image="undefined"
+                v-model:file="file"/>
                     
-                <div class="flex flex-col gap-2 mt-4" v-if="!dreamsnap">
+                <!-- <div class="flex flex-col gap-2 mt-4" v-if="!dreamsnap">
                         <label
                         for="image"
                         class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-gray-600 transition hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
@@ -88,7 +91,7 @@
                 <img v-if="dreamsnap?.image"
                             :src="dreamsnap.image"
                             alt="Aperçu"
-                            class="h-32 w-32 rounded-lg object-cover mt-4" />
+                            class="h-32 w-32 rounded-lg object-cover mt-4" /> -->
                 
                 <input type="checkbox" v-model="form.checked" class="opacity-0">
 

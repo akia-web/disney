@@ -30,5 +30,9 @@ export async function getUserFromSession(event: any) {
         return null
     }
 
-    return session.user
+    return {
+        id: session.user.id,
+        email: session.user.email,
+        role: session.user.role
+    }
 }

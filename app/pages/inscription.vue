@@ -1,5 +1,6 @@
 <template>
-  <h1>Inscription</h1>
+  <div class="bg-white p-2.5 mt-4 md:w-[50%] mx-auto h-[80vh]">
+    <h1 class="text-center mt-4 mb-4">Inscription</h1>
     <form>
       <div class="flex flex-col">
         <label for="email">
@@ -7,7 +8,7 @@
         </label>
         <input v-model="form.email" 
               type="email" id="email" 
-              class="border" 
+              class="border rounded-[7px] p-1" 
               placeholder="email">
       </div>
 
@@ -15,30 +16,45 @@
         <label for="password">
           Mot de passe
         </label>
-        <input v-model="form.password" 
+
+        <div class="relative">
+          <input v-model="form.password" 
               :type="showPassword ? 'text' : 'password'" 
               id="password" 
-              class="border" 
+              class="border rounded-[7px] p-1 w-full" 
               placeholder="Mot de passe">
-      </div>
 
-        <button type="button" 
-                @click="showPassword = !showPassword">
-              {{ showPassword ? 'Cacher' : 'Afficher' }}
-        </button>
-         
+              <button type="button" 
+                  @click="showPassword = !showPassword">
+            <ClientOnly>
+              <Icon :name="showPassword ? 'material-symbols:visibility-rounded' : 'mdi-light:eye-off'"
+                  :class="{
+                          'text-pink': showPassword,
+                          'text-black': !showPassword
+                          }"
+                          class="absolute right-1 top-1/2 -translate-y-1/2"
+                  size="24"
+              />
+            </ClientOnly>
+          </button>
+
+        </div>
+
+      </div>         
     </form>
     <div>
       <input type="checkbox" v-model="form.checked" class="opacity-0">
     </div>
     
      
-
-    <button @click="register" class="border mt-4">Se connecter</button>
+    <div class="flex justify-center">
+      <button @click="register" class="bg-card-color text-gold p-4 rounded-lg font-bold ">S'inscrire</button>
+    </div>
+  </div>
 
 </template>
 <script lang="ts" setup>
-
+const toast = useToast()
 
 const form = reactive({
   email: '',
@@ -48,9 +64,20 @@ const form = reactive({
 
 const showPassword = ref(false)
 const register = async () => {
-  const response = await $fetch('/api/auth/register', {
+  try{
+    await $fetch('/api/auth/register', {
     method: 'POST',
     body: form
-  })
+    })
+
+    await navigateTo('/connexion')
+     toast.success('Inscription réussie')
+  }catch(error: any){
+    toast.error(error.data?.message)
+  }
+
+  
+
+
 }
 </script>

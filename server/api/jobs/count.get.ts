@@ -1,18 +1,43 @@
 import prisma from '~~/server/utils/prisma'
 
-export default defineEventHandler(async () => {
-    const result = await prisma.character.groupBy({
-        by: ['job'],
+export default defineEventHandler(async (event) => {
+    const query = getQuery(event)
+    const user = await getUserFromSession(event)
+    const userId = user?.id
+
+    const result = await prisma.characterUser.groupBy({
+        by: ['jobId'],
+        where: {
+            userId
+        },
         _count: {
-            job: true
+            jobId: true
         },
         orderBy: {
-            job: 'asc'
+            jobId: 'asc'
         }
     })
 
-    return result.map((item) => ({
-        job: item.job,
-        number: item._count.job
+    const jobs = await prisma.job.findMany({
+        where: {
+            id: {
+                in: result.map(item => item.jobId)
+            }
+        },
+        select: {
+            id: true,
+            name: true,
+            image: true
+        },
+        orderBy: {
+            name: 'asc'
+        }
+    })
+
+    return jobs.map(job => ({
+        name: job.name,
+        image: job.image,
+        number: result.find(item => item.jobId === job.id)?._count.jobId ?? 0,
+        id: job.id
     }))
 })

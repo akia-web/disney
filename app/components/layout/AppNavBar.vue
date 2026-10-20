@@ -1,10 +1,18 @@
 <template>
   <div class="flex bg-white/90 justify-between align-center items-center p-2.5 shadow-md">
-    <NuxtLink to="/">
-       <ClientOnly>
-         <Icon name="mdi-light:home" />
-       </ClientOnly>
-    </NuxtLink>
+    
+      <div class="flex gap-6">
+        <NuxtLink :to="'/'">
+          <div class="flex items-center gap-2">
+            <ClientOnly>
+              <Icon name="mdi-light:image" />
+            </ClientOnly>   
+            <p>Dreamsnap</p>
+          </div>
+        </NuxtLink>
+      </div>
+      
+
 
       <div class="flex gap-6">
         <NuxtLink :to="'/personnages'">
@@ -47,10 +55,6 @@ const logout = async() =>{
    await auth.logout()
    navigateTo('/')
 }
-
-onMounted(()=>{
-  auth.fetchUser()
-})
 
 </script>
 

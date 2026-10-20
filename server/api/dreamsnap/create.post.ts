@@ -2,6 +2,11 @@ import { uploadImage } from '~~/server/utils/cloudinary'
 
 export default defineEventHandler(async (event) => {
     const formData = await readMultipartFormData(event)
+    const user = await getUserFromSession(event)
+
+    if (!user) {
+        throw new Error('Utilisateur non trouvé')
+    }
 
     if (!formData) {
         return {
@@ -41,7 +46,8 @@ export default defineEventHandler(async (event) => {
             rank: Number(rank),
             moonlight: Number(moonlight),
             date: new Date(date),
-            image: image.secure_url
+            image: image.secure_url,
+            userId: user.id,
         }
     })
 

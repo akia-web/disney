@@ -1,28 +1,12 @@
 import { Prisma } from "~/generated/prisma/client"
 
 export default defineEventHandler(async (event) => {
-    // const query = getQuery(event)
-
-    // const search = String(query.search ?? '').trim()
-    // const job = String(query.job ?? '').trim()
-
-    // let where: Prisma.CharacterWhereInput | undefined
-
-    // if (job) {
-    //     where = {
-    //         job
-    //     }
-    // } else if (search) {
-    // where = {
-    //     name: {
-    //         contains: search,
-    //         mode: 'insensitive'
-    //     }
-    // }
-    // }
-
+    const user = await getUserFromSession(event)
+    if (!user) {
+        throw new Error('utilisateur non trouvé')
+    }
     return await prisma.dreamsnap.findMany({
-        // where,
+        where: { userId: user.id },
         orderBy: {
             date: 'desc'
         }

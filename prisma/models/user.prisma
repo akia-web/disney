@@ -5,6 +5,8 @@ model User {
   role     Role     @default(USER)
 
   sessions Session[]
+  characterUsers CharacterUser[]
+  dreamsnaps Dreamsnap[]
 }
 
 enum Role {

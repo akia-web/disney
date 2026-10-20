@@ -51,3 +51,6 @@ npx prisma migrate dev --name add_product
 
 ##Lancer le docker localement
 docker compose up -d
+
+##icones
+https://icon-sets.iconify.design/mdi-light/

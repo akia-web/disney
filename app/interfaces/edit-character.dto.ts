@@ -1,7 +1,10 @@
+import type { CharacterDto } from "./characters-dto";
+import type { JobsDto } from "./jobs-dto";
+
 export interface EditCharacterDto {
-    name: string;
+    character: CharacterDto;
     level: string;
-    job: string;
+    job: JobsDto;
     checked: boolean;
-    id: number
+    id?: number
 }

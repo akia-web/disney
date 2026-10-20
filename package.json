@@ -1,7 +1,7 @@
 {
   "name": "disney",
   "type": "module",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -22,6 +22,7 @@
     "pg": "^8.22.0",
     "pinia": "^4.0.2",
     "prisma": "^7.9.1",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"

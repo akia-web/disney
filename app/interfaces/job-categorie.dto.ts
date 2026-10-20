@@ -1,4 +1,6 @@
 export interface JobCategorieDto {
-    job: string;
-    number: string
+    name: string;
+    number: string;
+    image: string;
+    id: number
 }

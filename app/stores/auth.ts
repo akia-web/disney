@@ -6,19 +6,30 @@ export const useAuthStore = defineStore('auth', {
             id: number
             email: string
             role: string
-        }
+        },
+        initialized: false
     }),
 
     actions: {
         async fetchUser() {
-            this.user = await $fetch<any>('/api/auth/me')
+            this.user = await $fetch<{
+                id: number
+                email: string
+                role: string
+            }>('/api/auth/me', {
+                headers: useRequestHeaders(['cookie'])
+            })
         },
 
         async login(form: UserLoginDto) {
-            this.user = await $fetch<any>('/api/auth/login', {
-                method: 'POST',
-                body: form
-            })
+            try {
+                this.user = await $fetch<any>('/api/auth/login', {
+                    method: 'POST',
+                    body: form
+                })
+            } catch (error: any) {
+                return error.data?.message
+            }
         },
 
         async logout() {

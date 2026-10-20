@@ -1,5 +1,5 @@
 <template>
-    <footer >
+    <footer class="" >
         <div class="bg-gold text-center p-2 mt-2">
         Version : {{ config.public.appVersion }}
         </div>

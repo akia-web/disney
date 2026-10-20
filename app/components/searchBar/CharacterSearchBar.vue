@@ -2,19 +2,19 @@
     <div class="flex gap-4 flex-wrap mt-4">
         <button v-for="jobCategorie in jobsCategories"
                         class="flex gap-2 border border-gold rounded-lg p-2"
-                        :class="{'bg-white':selectedCategorie === jobCategorie.job,
+                        :class="{'bg-white':selectedCategorie === jobCategorie.name,
                         }"
-                        @click="switchCategorie(jobCategorie.job)">
-            <img v-if="jobsIcones" :src="getJobIcon(jobsIcones,jobCategorie.job)" 
-                :alt="jobCategorie.job"
+                        @click="switchCategorie(jobCategorie.name)">
+            <img v-if="jobsIcones" :src="getJobIcon(jobsIcones,jobCategorie.name)" 
+                :alt="jobCategorie.name"
                 class="w-6.25 rounded-full p-1 bg-white">
-            <span :class="{'text-card-color':selectedCategorie === jobCategorie.job, 
-                            'text-gold': selectedCategorie !== jobCategorie.job
+            <span class="hidden md:block" :class="{'text-card-color':selectedCategorie === jobCategorie.name, 
+                            'text-gold': selectedCategorie !== jobCategorie.name
                         }">
-                     {{ jobCategorie.job }}
+                     {{ jobCategorie.name }}
             </span>
-            <span :class="{'text-card-color':selectedCategorie === jobCategorie.job, 
-                            'text-gold': selectedCategorie !== jobCategorie.job
+            <span :class="{'text-card-color':selectedCategorie === jobCategorie.name, 
+                            'text-gold': selectedCategorie !== jobCategorie.name
                         }">({{ jobCategorie.number }})</span>
         </button>
     </div>
@@ -60,7 +60,7 @@ const characters = computed({
 });
 
 const searchApi = async (query?:{}) =>{
- characters.value = await  $fetch('/api/character/all', {query})
+ characters.value = await  $fetch<CharacterDto[]>('/api/character/all', {query})
 }
 
 const switchCategorie = async (job: string) => {

@@ -31,7 +31,7 @@
                 v-model="search"
                 type="text"
                 placeholder="Rechercher..."
-                class="sticky top-0 w-full border-b px-4 py-2 outline-none"
+                class="sticky top-0 w-full border-b px-4 py-2 outline-none bg-white"
                 @click.stop
             />
 

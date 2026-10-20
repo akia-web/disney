@@ -1,7 +1,7 @@
 <template>
     <div
     class="fixed inset-0 flex items-center justify-center bg-gray-500/80">
-        <div class="bg-white rounded shadow w-[60%]">
+        <div class="bg-white rounded shadow w-[90%] md:w-[60%]">
             <div class="flex gap-2 items-center justify-between bg-card-color text-white p-4">
                 <h1>{{ title }}</h1>
                 <ClientOnly>
@@ -40,7 +40,7 @@
 
 
                         <div v-if="open"
-                                class="absolute z-10 mt-2 max-h-60 w-full overflow-y-auto rounded-lg border bg-white shadow scrollbar-thin">
+                                class="absolute z-10 mt-2 max-h-41.25 w-full overflow-y-auto rounded-lg border bg-white shadow scrollbar-thin">
                             
                                 <div v-for="job in jobsList"
                                 :key="job.name"

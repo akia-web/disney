@@ -30,6 +30,7 @@
           <ClientOnly>
             <Icon name="mdi-light:book" />
           </ClientOnly>
+          <p>Connexion</p>
         </NuxtLink>
       </div>
 

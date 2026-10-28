@@ -4,52 +4,52 @@ export default defineEventHandler(async (event) => {
     const formData = await readMultipartFormData(event)
 
     if (!formData) {
-        return {
-            success: false,
-            message: 'Données manquantes'
-        }
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'Données invalides',
+            message: 'Champs manquant'
+        })
     }
 
     const name = formData.find(item => item.name === 'name')?.data.toString()
-    const level = formData.find(item => item.name === 'level')?.data.toString()
-    const job = formData.find(item => item.name === 'job')?.data.toString()
     const file = formData.find(item => item.name === 'file')
     const checked = formData.find(item => item.name === 'checked')?.data.toString()
 
 
-    if (!name || !level || !job || !file) {
-        return {
-            success: false,
-            message: 'Champs manquants'
-        }
+    if (!name || !file) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'Données invalides',
+            message: 'Champs manquant'
+        })
     }
 
     if (!checked || checked === 'true') {
-        return {
-            success: false,
-            message: 'Erreur'
-        }
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'Données invalides',
+            message: 'Veuillez vérifier les informations saisies.'
+        })
     }
 
     const searchCharacter = await prisma.character.findUnique({
         where: {
-            name
+            name,
         }
     })
 
     if (searchCharacter) {
-        return {
-            success: false,
+        throw createError({
+            statusCode: 409,
+            statusMessage: 'Conflict',
             message: 'Personnage déjà existant'
-        }
+        })
     }
-    const image = await uploadImage(file.data, 'characters', name)
+    const image = await uploadImage(file.data, 'ddv/characters', name)
 
     const character = await prisma.character.create({
         data: {
             name,
-            level: Number(level),
-            job,
             image: image.secure_url
         }
     })

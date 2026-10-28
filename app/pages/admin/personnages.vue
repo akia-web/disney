@@ -9,7 +9,7 @@
                 </ClientOnly>          
         </button>
 
-        <PopupEditCharacter v-if="showModal"
+        <PopupAdminEditCharacter v-if="showModal"
                             :title="titleModal"
                             v-model:character="selectedCharacter"
                             @closeModal="handleCloseModal"/>
@@ -58,7 +58,6 @@
 </template>
 <script lang="ts" setup>
 import type { CharacterDto } from '~/interfaces/characters-dto'
-import type { JobsDto } from '~/interfaces/jobs-dto'
 
 definePageMeta({
   layout: 'admin',
@@ -69,11 +68,7 @@ const showModal = ref(false)
 const titleModal = ref('')
 const characters = ref<CharacterDto[]>([])
 const selectedCharacter= ref<CharacterDto>()
-const jobsIcons = ref<JobsDto[]>([])
 
-onMounted(async ():Promise<void> =>{
-    jobsIcons.value = await $fetch<{ name: string; url: string }[]>('/api/cloudinary/jobs')
-})
 
 const openModal = (title: string, character?: CharacterDto):void =>{
     titleModal.value = title

@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
     const nameFile = Date.now()
 
-    const image = await uploadImage(file.data, `dreamsnap/${user.email}`, nameFile.toString())
+    const image = await uploadImage(file.data, `ddv/dreamsnap/${user.email}`, nameFile.toString())
 
     const dreamsnap = await prisma.dreamsnap.create({
         data: {

@@ -4,10 +4,11 @@ export default defineEventHandler(async (event) => {
     const formData = await readMultipartFormData(event)
 
     if (!formData) {
-        return {
-            success: false,
-            message: 'Données manquantes'
-        }
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'Données invalides',
+            message: 'Champs manquant'
+        })
     }
 
     const name = formData.find(item => item.name === 'name')?.data.toString()

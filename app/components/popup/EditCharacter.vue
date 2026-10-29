@@ -7,7 +7,7 @@
                 <ClientOnly>
                 <Icon name="ic:baseline-cancel" 
                         size="24"
-                        @click="close"/>
+                        @click="close(undefined)"/>
                 </ClientOnly>   
             </div>
         
@@ -16,7 +16,7 @@
                                   id="select1"
                                   column="image"
                                   :selectedOption="selectedCharacter" 
-                                  :table="charactersList"
+                                  :table="missingCharacter"
                                   @chooseOption="selectFavoriteGift"
                                   :disabled="!!character"/>
                 <UiLabelAndInput v-model:property="form.level"
@@ -82,14 +82,24 @@ const props = defineProps({
 
 const emit = defineEmits(['closeModal']);
 
-const close = () => {
+const missingCharacter = ref<CharacterDto[]>([])
+const characterUser = ref<CharactersUserDto[]>([])
+
+const close = (character: CharactersUserDto | undefined, isUpdate=false) => {
+
   resetForm()
-  emit('closeModal');
+  emit('closeModal', {character, isUpdate:isUpdate });
 };
 
 
 onMounted(async () => {
 charactersList.value = await $fetch<CharacterDto[]>(`/api/character/all`)
+characterUser.value =  await $fetch<CharactersUserDto[]>(`/api/character-user/all`)
+
+missingCharacter.value = charactersList.value.filter(    (character) => !characterUser.value.some(
+        (characterUser) => characterUser.character.id === character.id
+))
+
 jobsList.value = await $fetch<JobsDto[]>(`/api/jobs/all`)
   selectedCharacter.value = props.character?.character,
   selectedJob.value = props.character?.job
@@ -150,21 +160,21 @@ const send = async () => {
       }
 
       if(!props.character){
-        const save : CharacterDto = await $fetch<CharacterDto>('/api/character-user/create', {
+        const save : CharactersUserDto = await $fetch<CharactersUserDto>('/api/character-user/create', {
           method: 'POST',
           body: formSend
           })
 
-        close()
+        close(save)
 
         }else{
 
-          const save : CharacterDto = await $fetch<CharacterDto>(`/api/character-user/${props.character.id}`, {
+          const save : CharactersUserDto = await $fetch<CharactersUserDto>(`/api/character-user/${props.character.id}`, {
             method: 'PATCH',
             body: formSend
           })
 
-          close()
+          close(save, true)
 
         }
   }

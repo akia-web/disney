@@ -26,7 +26,7 @@
       </div>
 
       <div v-if="!auth.user">
-         <NuxtLink :to="'/connexion'">
+         <NuxtLink :to="'/connexion'" class="flex items-center gap-2">
           <ClientOnly>
             <Icon name="mdi-light:book" />
           </ClientOnly>

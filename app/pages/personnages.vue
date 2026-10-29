@@ -1,5 +1,5 @@
 <template>
-    <h1 class="text-lg text-gold font-bold">Personnages</h1>
+    <h1 class="text-lg text-gold font-bold">Personnages ({{ characters.length }})</h1>
 
     <div v-if="auth.user">
             <div class="flex flex-row-reverse reactive">  
@@ -15,10 +15,10 @@
         <PopupEditCharacter v-if="showModal" 
                             :title="titleModal"
                             v-model:character="selectedCharacter"
-                            @closeModal="handleCloseModal"/>
+                            @closeModal="handleCloseModal($event)"/>
 
             <SearchBar v-model:elementTable="characters"
-                        type="character-user"/>
+                        type="character-user" v-model:resetFilter="resetFilter"/>
 
         
 
@@ -57,13 +57,13 @@
 </template>
 <script lang="ts" setup>
 import type { CharactersUserDto } from '~/interfaces/characters-user.dto'
-import type { JobCategorieDto } from '~/interfaces/job-categorie.dto'
 
 const auth = useAuthStore()
 const showModal = ref(false)
 const titleModal = ref('')
 const characters = ref<CharactersUserDto[]>([])
 const selectedCharacter= ref<CharactersUserDto>()
+const resetFilter = ref(false)
 
 const openModal = (title: string, character?: CharactersUserDto):void =>{
     titleModal.value = title
@@ -71,10 +71,23 @@ const openModal = (title: string, character?: CharactersUserDto):void =>{
     showModal.value = true 
 }
 
-const handleCloseModal = async ():Promise<void> => {
+const handleCloseModal = async (event: any):Promise<void> => {
     showModal.value = false
     selectedCharacter.value = undefined
-    characters.value =  await $fetch<CharactersUserDto[]>('/api/character-user/all')
+    console.warn(event)
+    if(event.character && event.isUpdate){
+     const indexElement =   characters.value.findIndex((element)=> element.character.id === event.character.characterId)
+     if(indexElement !== -1){
+        if(characters.value[indexElement]!.job.id !== event.character.job.id){
+            resetFilter.value = true
+        }
+        characters.value[indexElement]!.level = event.character.level
+     }
+
+    }else if(event.character && !event.isUpdate){
+        resetFilter.value = true
+    }
+   
 }
 
 </script>

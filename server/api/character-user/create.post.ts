@@ -13,6 +13,10 @@ export default defineEventHandler(async (event) => {
             characterId: body.character.id,
             jobId: body.job.id,
             level: Number(body.level)
+        },
+        include: {
+            character: true,
+            job: true
         }
     })
 

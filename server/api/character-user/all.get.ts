@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
 
     const search = String(query.search ?? '').trim()
     const job = String(query.job ?? '').trim()
+    const orderByLevel = String(query.orderByLevel ?? '').trim()
 
     if (!user) {
         throw new Error('utilisateur non trouvé')
@@ -39,10 +40,13 @@ export default defineEventHandler(async (event) => {
             character: true,
             job: true
         },
-        orderBy: {
-            character: {
-                name: 'asc'
-            }
-        }
+        orderBy: orderByLevel
+            ? [
+                { level: orderByLevel === 'smallest' ? 'asc' : 'desc' },
+                { character: { name: 'asc' } }
+            ]
+            : [
+                { character: { name: 'asc' } }
+            ]
     })
 })

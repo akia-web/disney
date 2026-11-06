@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
-    if (body.checked === undefined || body.checked === true || body.checked === undefined) {
+    if (body.checked === undefined || body.checked === true || body.checked === undefined || !body.email) {
         throw createError({
             statusCode: 400,
             statusMessage: 'Données invalides',

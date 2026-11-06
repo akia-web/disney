@@ -3,6 +3,8 @@ model User {
   email    String   @unique
   password String
   role     Role     @default(USER)
+  resetPasswordCode      String?  @unique
+  expiresResetPasswordCodeAt DateTime?
 
   sessions Session[]
   characterUsers CharacterUser[]

@@ -1,11 +1,12 @@
 {
   "name": "disney",
   "type": "module",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "private": true,
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "applymigrations": "npx prisma generate",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare && prisma generate"
@@ -20,6 +21,7 @@
     "@vuelidate/validators": "^2.0.4",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.10.0",
+    "nodemailer": "^10.3.1",
     "nuxt": "^4.5.1",
     "pg": "^8.22.0",
     "pinia": "^4.0.2",
@@ -31,6 +33,7 @@
   },
   "devDependencies": {
     "@iconify-json/mdi-light": "^1.2.2",
-    "@types/bcrypt": "^6.0.0"
+    "@types/bcrypt": "^6.0.0",
+    "@types/nodemailer": "^8.0.2"
   }
 }

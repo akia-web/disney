@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-white p-2.5 mt-4 md:w-[50%] mx-auto h-[80vh]">
-    <h1 class="text-center mt-4 mb-4">Connexion</h1>
+    <div class="bg-white p-2.5 mt-4 md:w-[50%] mx-auto h-[80vh] rounded-xl">
+    <h1 class="text-center mt-8 mb-4">Connexion</h1>
     <form>
       <UiLabelAndInput v-model:property="form.email"
                     id="email"
@@ -45,6 +45,9 @@
 
       </div>
 
+            <NuxtLink to="/reset-password/send-request" class="text-card-color underline mt-4 text-right block">
+              Mot de passe oublié?
+      </NuxtLink>
 
          
     </form>

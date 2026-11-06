@@ -2,6 +2,7 @@
 
 @theme {
     --color-card-color: #191E63;
+    --color-info-popup:#999ee2;
     --color-gold: #FFE29B;
 }
 
@@ -14,3 +15,4 @@ h1, h2 {
     font-family: "Montserrat", sans-serif;
     font-weight: bold;
 }
+

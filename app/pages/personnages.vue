@@ -44,16 +44,7 @@
 
             </div>
     </div>
-
-    <div v-else class="h-[80vh] flex justify-center items-center">
-        <p class="text-gold text-xl">Connectez-vous pour suivre vos personnages</p>
-    </div>
-
-
-    
-
-
-
+ 
 </template>
 <script lang="ts" setup>
 import type { CharactersUserDto } from '~/interfaces/characters-user.dto'
@@ -87,7 +78,12 @@ const handleCloseModal = async (event: any):Promise<void> => {
     }else if(event.character && !event.isUpdate){
         resetFilter.value = true
     }
-   
 }
+
+    onMounted(()=>{
+        if(!auth.user){
+            navigateTo('connexion')
+        }
+    })
 
 </script>

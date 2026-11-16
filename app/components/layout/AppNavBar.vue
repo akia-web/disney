@@ -1,29 +1,18 @@
 <template>
   <div class="flex bg-white/90 justify-between align-center items-center p-2.5 shadow-md">
     
-      <div class="flex gap-6">
-        <NuxtLink :to="'/'">
+      <div class="flex gap-6" v-for="item in navBarRoute">
+        <NuxtLink :to="item.link">
           <div class="flex items-center gap-2">
             <ClientOnly>
-              <Icon name="mdi-light:image" />
+              <Icon :name=item.iconName />
             </ClientOnly>   
-            <p>Dreamsnap</p>
+            <p>{{item.name}}</p>
           </div>
         </NuxtLink>
       </div>
-      
 
-
-      <div class="flex gap-6">
-        <NuxtLink :to="'/personnages'">
-          <div class="flex items-center gap-2">
-            <ClientOnly>
-              <Icon name="mdi-light:account" />
-            </ClientOnly>   
-            <p>Personnages</p>
-          </div>
-        </NuxtLink>
-      </div>
+     
 
       <div v-if="!auth.user">
          <NuxtLink :to="'/connexion'" class="flex items-center gap-2">
@@ -48,7 +37,9 @@
 
 
 <script lang="ts" setup>
+import { navBarRoutes } from '~/conf/nav-bar'
 import { useAuthStore } from '~/stores/auth'
+const navBarRoute = navBarRoutes
 
 const auth = useAuthStore()
 

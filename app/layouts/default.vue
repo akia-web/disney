@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-linear-to-b from-card-color to-card-color/70  w-full">
+  <div class="bg-linear-to-b from-card-color to-card-color/70  w-full min-h-screen">
     <header class="hidden md:block sticky top-0 z-50"">
       <div>
         <LayoutAppNavBar />
       </div>
     </header>
 
-    <div class="w-[90%] mx-auto">
-      <div class="lg:mt-4 pb-20 pt-8 min-h-[85vh]">
+    <div class="w-[90%] mx-auto min-h-[calc(100vh-45px)]">
+      <div class="md:mt-[var--(deskNav)] p-4 mb-15 md:mb-0">
         <NuxtPage/>
       </div>
     </div>

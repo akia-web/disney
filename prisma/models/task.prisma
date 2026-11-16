@@ -1,0 +1,7 @@
+model Task {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  description String
+  isCompleted Boolean
+  user        User      @relation(fields: [userId], references: [id])
+}

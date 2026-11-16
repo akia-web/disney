@@ -1,5 +1,10 @@
 <template>
-    <div class="bg-white p-2.5 mt-4 md:w-[50%] mx-auto h-[80vh] rounded-xl">
+      <div class="min-h-[calc(100vh-var(--mobileNav))] w-full flex justify-center items-center">
+      <img src="~/assets/images/ddv-desktop-send-password.png" class="hidden md:block  h-[80vh] object-cover rounded-tl-xl rounded-bl-xl" alt="">
+
+    <div class="bg-white p-4 w-full md:w-[30%] md:min-w-120 rounded-lg md:rounded-tl-none md:rounded-bl-none h-[80vh]">
+        <img src="~/assets/images/ddv-mobile-send-password.png" class="md:hidden rounded" alt="">
+
         <h1 class="text-center mt-8 mb-8">Définir un nouveau mot de passe</h1>
         <form>
             <div class="flex flex-col mt-8">
@@ -46,8 +51,19 @@
         <div class="flex justify-center">
             <button @click="savePassword" 
             :disabled="v$.$invalid"
-            class="bg-card-color text-gold p-4 rounded-lg font-bold disabled:bg-gray-300 disabled:text-gray-500 ">Changer le mot de passe</button>
+            :class="{'cursor-not-allowed':v$.$invalid, 'cursor-pointer': !v$.$invalid}"
+            class="bg-card-color text-gold p-4 rounded-lg font-bold disabled:bg-gray-300 disabled:text-gray-500 hover:bg-gold hover:text-card-color transition-colors duration-100 ease-in-out">Changer le mot de passe</button>
         </div>
+
+        <NuxtLink to="/connexion">
+          <div class="flex items-center gap-2 mt-4">
+            <ClientOnly>
+              <Icon name="bx:arrow-back" />
+            </ClientOnly>   
+            <p>Connexion</p>
+          </div>
+        </NuxtLink>
+    </div>
     </div>
 </template>
 

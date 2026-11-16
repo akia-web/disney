@@ -9,6 +9,7 @@ model User {
   sessions Session[]
   characterUsers CharacterUser[]
   dreamsnaps Dreamsnap[]
+  task Task[]
 }
 
 enum Role {

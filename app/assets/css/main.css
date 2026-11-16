@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+:root {
+    --footerHeight: 24px;
+    --deskNav: 44px;
+    --mobileNav: 48px;
+}
+
 @theme {
     --color-card-color: #191E63;
     --color-info-popup:#999ee2;

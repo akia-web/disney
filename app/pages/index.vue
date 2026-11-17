@@ -1,6 +1,6 @@
 <template>
     <div v-if="auth.user" class="flex gap-6 flex-wrap mt-5">
-        <div class="bg-white w-full md:w-[40%] p-5 rounded-lg">
+        <div class="bg-white w-full md:w-[40%] p-5 rounded-lg md:max-h-[90vh]">
             <h1 class="text-center text-xl">Liste de tâches</h1>
 
         <div class="flex flex-col gap-2 mt-4">
@@ -76,7 +76,7 @@
                 />
 
             </div>
-            <div class="grid grid-cols-[repeat(auto-fill,160px)] gap-4 justify-center">
+            <div class="grid grid-cols-[repeat(auto-fill,160px)] gap-4 justify-center  md:max-h-[70vh] overflow-y-auto custom-scrollbar">
                         <div v-for="companion in animals" class="bg-white rounded-xl p-2 flex flex-col items-center justify-center">
                                 <h2 class="text-center text-xs mb-1">{{ companion.name }}</h2>
                                 <img :src="companion.image" class="w-[100px] h-[100px] object-contain" alt="">

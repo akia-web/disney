@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
         data: {
             userId: user.id,
             characterId: body.character.id,
-            jobId: body.job.id,
+            jobId: body.job ? body.job.id : null,
             level: Number(body.level)
         },
         include: {

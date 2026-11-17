@@ -36,7 +36,7 @@
                         <img :src="character.character.image" class="w-37.5" alt="">
                     </div>
 
-                    <div class="flex flex-row-reverse mr-2 mb-2">
+                    <div class="flex flex-row-reverse mr-2 mb-2" v-if="character.job">
                         <img :src="character.job.image" class="w-6.25" alt="">
                     </div>
                     

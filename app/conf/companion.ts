@@ -664,11 +664,10 @@ export const companions = [
         image: 'https://static.wikia.nocookie.net/disneydreamlightvalley/images/9/96/Corbeau_bleu.png/revision/latest?cb=20250201172208&path-prefix=fr'
     },
     {
-        name: 'Corbeau bleu',
+        name: 'Corbeau brun',
         presence: [
             {
                 day: 'Mardi',
-                hour: 'De 18h à minuit'
             },
         ],
         type: 'Jeu de base',

@@ -150,11 +150,11 @@ const selectJob = (job:JobsDto) => {
 
 const send = async () => {
 
-  if(selectedJob.value && selectedCharacter.value){
+  if(selectedCharacter.value){
       const formSend : EditCharacterDto = {
         level: form.level,
         checked: form.checked,
-        job: selectedJob.value,
+        job: selectedJob.value? selectedJob.value:undefined,
         character: selectedCharacter.value,
     
       }

@@ -1,14 +1,16 @@
 import prisma from '~~/server/utils/prisma'
 
 export default defineEventHandler(async (event) => {
-    const query = getQuery(event)
     const user = await getUserFromSession(event)
     const userId = user?.id
 
     const result = await prisma.characterUser.groupBy({
         by: ['jobId'],
         where: {
-            userId
+            userId,
+            jobId: {
+                not: null
+            }
         },
         _count: {
             jobId: true
@@ -21,7 +23,7 @@ export default defineEventHandler(async (event) => {
     const jobs = await prisma.job.findMany({
         where: {
             id: {
-                in: result.map(item => item.jobId)
+                in: result.map(item => item.jobId!)
             }
         },
         select: {

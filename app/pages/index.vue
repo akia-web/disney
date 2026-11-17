@@ -1,7 +1,7 @@
 <template>
     <div v-if="auth.user" class="flex gap-6 flex-wrap mt-5">
         <div class="bg-white w-full md:w-[40%] p-5 rounded-lg">
-            <h1 class="text-center">Liste de tâches</h1>
+            <h1 class="text-center text-xl">Liste de tâches</h1>
 
         <div class="flex flex-col gap-2 mt-4">
             <div class="flex gap-2 items-center">
@@ -55,24 +55,34 @@
 
         </div>
 
-        <div>
-            <div class="flex gap-2 mb-2 items-center flex-wrap">
+        <div class="w-full md:w-[55%]">
+            <h2 class="text-center text-white mb-4 text-xl p-5">Présents aujourd'hui</h2>
+            <div class="flex gap-2 mb-6 items-center flex-wrap justify-center">
 
-                <select v-model="selectedTypeAnimal" class="bg-white p-1.5 rounded-lg h-[50px]" @change="filtrerCompanion" >
-                <option :value="undefined">Aucun filtre</option>
-                    <option :value="value" v-for="value in typeAnimals">{{ value }}</option>
-                </select>
+                <UiMultiSelectOption
+                    v-model="selectedTypeAnimal"
+                    id="companions"
+                    placeholder="Tous les compagnons"
+                    :table="typeAnimals"
+                    @change="filtrerCompanion"
+                />
+                
+                <UiMultiSelectOption
+                    v-model="selectedGame"
+                    placeholder="Tous les jeux"
+                    id="game"
+                    :table="typeGame"
+                    @change="filtrerByGame"
+                />
 
-                <!-- <button v-for="value in typeGame"
-                @click="filtrerCompanion(value)"
-                class="bg-white p-1 rounded-md h-[50px]">{{ value }}</button> -->
             </div>
-            <div class="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+            <div class="grid grid-cols-[repeat(auto-fill,160px)] gap-4 justify-center">
                         <div v-for="companion in animals" class="bg-white rounded-xl p-2 flex flex-col items-center justify-center">
-                                <h2 class="text-center">{{ companion.name }}</h2>
-                                <img :src="companion.image" class="w-37.5" alt="">
-                                <p class="text-center">{{ companion.presence?.hour === undefined? 'Toute la journée': companion.presence.hour }}</p>
-                                <p class="text-center">{{ companion.love }}</p>    
+                                <h2 class="text-center text-xs mb-1">{{ companion.name }}</h2>
+                                <img :src="companion.image" class="w-[100px] h-[100px] object-contain" alt="">
+                                <p class="text-center text-xs font-semibold mt-2">{{ companion.presence?.hour === undefined? 'Toute la journée': companion.presence.hour }}</p>
+                                <p class="text-center text-xs">{{ companion.place }}</p>
+                                <p class="text-center text-xs italic">{{ companion.love }}</p>    
                         </div>
             </div>
         </div>
@@ -94,9 +104,10 @@ interface CompanionDto{
 
 }
 
-const typeAnimals = ["Lapin", "Écureuil", "Tortue", "Passereau", "Raton laveur"]
-const typeGame = ["Jeu de base", "DLC1", "DLC2", "DLC3", "DLC Winnie", "DLC4"]
-const selectedTypeAnimal= ref()
+const typeAnimals = ["Lapin", "Écureuil", "Tortue", "Passereau", "Raton laveur", "Renard", "Corbeau", "Crocodile", "Singe", "Cobra", "Capybara", "Hibou", "Bébé dragon", "Pégase", "Oie", "Mouffette", "Abeille", "Hérission"  ]
+const typeGame = ["Jeu de base", "DLC 1", "DLC 2", "DLC 3", "DLC Winnie", "DLC 4"]
+const selectedTypeAnimal= ref<string[]>([])
+const selectedGame=ref<string[]>([])
 
 const auth = useAuthStore()
 const tasks = ref<taskDto[]>([])
@@ -121,24 +132,28 @@ onMounted(async ():Promise<void> =>{
    
 })
 
-const filtrerCompanion = (name?: any) => {
-    animals.value=[]
-    console.log(selectedTypeAnimal.value)
-
-
+const filtrerCompanion = () => {
+    animals.value = []
+    selectedGame.value=[]
 
     const today = new Date().toLocaleDateString(navigator.language, {
-            weekday: 'long'
-    })  
+        weekday: 'long'
+    })
 
-   const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1)
+    const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1)
 
     companions.forEach((companion) => {
         const companionDay = companion.presence.find(
             (jour) => jour.day === todayCapitalized
         )
 
-        if (companionDay && (!selectedTypeAnimal.value || companion.name.includes(selectedTypeAnimal.value))) {
+        if (
+            companionDay &&
+            (
+                selectedTypeAnimal.value.length === 0 ||
+                selectedTypeAnimal.value.some(type => companion.name.includes(type))
+            )
+        ) {
             animals.value.push({
                 name: companion.name,
                 presence: companionDay,
@@ -149,6 +164,41 @@ const filtrerCompanion = (name?: any) => {
         }
     })
 }
+
+
+const filtrerByGame = () => {
+    animals.value = []
+    selectedTypeAnimal.value=[]
+
+    const today = new Date().toLocaleDateString(navigator.language, {
+        weekday: 'long'
+    })
+
+    const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1)
+
+    companions.forEach((companion) => {
+        const companionDay = companion.presence.find(
+            (jour) => jour.day === todayCapitalized
+        )
+
+        if (
+            companionDay &&
+            (
+                selectedGame.value.length === 0 ||
+                selectedGame.value.some(type => companion.type.includes(type))
+            )
+        ) {
+            animals.value.push({
+                name: companion.name,
+                presence: companionDay,
+                love: companion.love,
+                place: companion.place,
+                image: companion.image
+            })
+        }
+    })
+}
+
 
 const createTask = async () =>{
     if (form.description.trim() !== '') {

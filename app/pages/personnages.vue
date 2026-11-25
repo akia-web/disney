@@ -69,7 +69,7 @@ const handleCloseModal = async (event: any):Promise<void> => {
     if(event.character && event.isUpdate){
      const indexElement =   characters.value.findIndex((element)=> element.character.id === event.character.characterId)
      if(indexElement !== -1){
-        if(characters.value[indexElement]!.job.id !== event.character.job.id){
+        if(characters.value[indexElement]?.job && characters.value[indexElement]!.job.id !== event.character.job.id){
             resetFilter.value = true
         }
         characters.value[indexElement]!.level = event.character.level

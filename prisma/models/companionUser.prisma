@@ -1,0 +1,11 @@
+model CompanionUser {
+  id          Int       @id @default(autoincrement())
+  companionId Int
+  userId      Int
+  isObtained Boolean
+
+  companion   Companion @relation(fields: [companionId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([companionId, userId])
+}

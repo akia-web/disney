@@ -3,4 +3,5 @@ model Job {
   name      String      @unique
   image     String
   characterUsers CharacterUser[]
+  companions Companion[]
 }

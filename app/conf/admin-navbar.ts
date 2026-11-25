@@ -6,9 +6,15 @@ export const adminNavBarRoutes: navBarDto[] = [
         iconName: 'mdi-light:account',
         name: 'Personnages'
     },
+        {
+        link: '/admin/companions',
+        iconName: 'fluent-emoji-high-contrast:owl',
+        name: 'Compagnons'
+    },
     {
         link: '/admin/jobs',
         iconName: 'mdi-light:account',
         name: 'Jobs'
     },
 ]
+

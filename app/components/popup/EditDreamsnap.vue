@@ -1,7 +1,6 @@
 <template>
-    <div v-if="showModal"
-    class="fixed inset-0 flex items-center justify-center bg-gray-500/80">
-        <div class="bg-white rounded shadow w-[60%]">
+   <div class="fixed inset-0 flex items-center justify-center bg-gray-500/80">
+        <div class="bg-white rounded shadow w-full md:w-[60%] h-full md:max-h-[85%] overflow-y-auto">
             <div class="flex gap-2 items-center justify-between bg-card-color text-white p-4">
                 <h1>{{ title }}</h1>
                 <ClientOnly>
@@ -83,43 +82,50 @@
                 @blur="v$?.moonstones.$touch()"
                 class="border p-2 rounded-lg">
 
-                <p v-if="isShowError && !file"
+                <p v-if="isShowError && (!dreamsnap && !file)"
                      class=" text-red-700 text-xs font-bold mt-4">Image manquante</p>
-                  <UiImageInput :image="undefined"
+                  <UiImageInput :image="dreamsnap?.image"
                 v-model:file="file"/>
                     
               
                 <input type="checkbox" v-model="form.checked" class="opacity-0">
 
-                <div class="flex justify-center gap-2">
+                <div class="flex justify-center items-center gap-2">
+
                   
-                  <button type="button" 
-                  class="bg-gray-200 p-4 rounded-lg text-xs"
-                  @click="showErrors">
-                          Voir les erreurs
-                    </button>
+                  <button v-if="dreamsnap"
+                  type="button"
+                  @click="deleteDreamsnap"
+                  :disabled="isLoading"
+                  class="bg-white text-red-800 cursor-pointer  p-4 rounded-lg font-bold border border-red-800 hover:bg-light-grey disabled:bg-gray-300 disabled:text-gray-500">
+                  Supprimer
+                  </button>
+
+                  
                   <button type="submit" 
-                  :disabled="v$?.$invalid || !file"
+                  :disabled="v$?.$invalid || (!dreamsnap && !file) || isLoading"
                   class="bg-card-color text-white p-4 rounded-lg font-bold disabled:bg-gray-300 disabled:text-gray-500">
                   {{dreamsnap?'Modifier' : 'Envoyer'}}
                   </button>
+
+                  <ClientOnly>
+                    <Icon name="akar-icons:info" class="text-card-color" size="24"
+                    @click="showErrors"/>
+                  </ClientOnly>
                 </div>
                 
             </form> 
         </div>
-        
-    </div>
+   </div>
 </template>
 
 <script lang="ts" setup>
 import type { DreamsnapDto } from '~/interfaces/dreamsnap.dto';
-import type { EditDreamsnapDto } from '~/interfaces/edit-dreamnap.dto';
 import { minLength, required,minValue } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { validDate } from '~/validator/validDate';
 
 const props = defineProps({
-    showModal: Boolean,
     title: String,
     dreamsnap: Object as PropType<DreamsnapDto>
 });
@@ -127,9 +133,9 @@ const props = defineProps({
 
 const emit = defineEmits(['closeModal']);
 
-const close = (Dreamsnap? : DreamsnapDto) => {
+const close = (Dreamsnap? : DreamsnapDto, isDeleted?: boolean) => {
   resetForm()
-  emit('closeModal', Dreamsnap );
+  emit('closeModal', Dreamsnap, isDeleted);
 };
 
 const moonlights = [300, 600, 900, 1200, 1500, 2500, 4000, 7000, 8500, 10000, 12000]
@@ -142,6 +148,8 @@ const fileName = ref('')
 const file = ref()
 const preview = ref('')
 const isShowError=ref(false);
+const isLoading = ref(false);
+const toast = useToast()
 
 const form = reactive({
   theme: '',
@@ -175,13 +183,15 @@ const resetForm = () => {
 watch(
   () => props.dreamsnap,
   (newValue, oldValue) => {
+    console.log('props.dreamsnap changed:', newValue);
     if(newValue){
       form.theme = newValue.theme
+      form.moonstones = newValue.moonlight
       form.rank = newValue.rank.toString()
-      form.date = newValue.date.toDateString()
+      form.date = new Date (newValue.date).toISOString().split('T')[0]
       selectedMoonLight.value = newValue.moonlight;   
     }
-  }
+  },{ immediate: true }
 )
 
 const selectMoonlight = (moonlight:number) => {
@@ -190,60 +200,68 @@ const selectMoonlight = (moonlight:number) => {
 }
 
 onBeforeUnmount(() => {
-  if (preview.value) {
-    URL.revokeObjectURL(preview.value)
+  if (preview.value ) {
+    URL.revokeObjectURL(preview.value )
   }
 })
 
 
 const showErrors = () => {
-  v$.value.$touch()
+  v$.value .$touch()
   isShowError.value = true
 }
 
 const send = async () => {
-  if(!props.dreamsnap){
-    const formData = new FormData()
-
-    formData.append('theme', form.theme)
-    formData.append('moonlight', String(form.moonstones))
-    formData.append('rank', String(form.rank))
-    formData.append('checked', String(form.checked))
-    formData.append('date', String(form.date))
-
-    if (file.value) {
-      formData.append('file', file.value)
-    }
+  const formData = new FormData()
+  const url = props.dreamsnap ? `/api/dreamsnap/${props.dreamsnap.id}` : '/api/dreamsnap/create'
 
 
-   const save : DreamsnapDto = await $fetch<DreamsnapDto>('/api/dreamsnap/create', {
-      method: 'POST',
-      body: formData
-    })
+  formData.append('theme', form.theme)
+  formData.append('moonlight', String(form.moonstones))
+  formData.append('rank', String(form.rank))
+  formData.append('checked', String(form.checked))
+  formData.append('date', String(form.date))
 
-    close(save)
+  if (file.value) {
+    formData.append('file', file.value)
+  }
 
-  }else{
-
-    if(props.dreamsnap && props.dreamsnap.id){
-      const formSend : EditDreamsnapDto = {
-        theme: form.theme,
-        checked: form.checked,
-        moonlight: selectedMoonLight.value,
-        rank: Number(form.rank),
-        id: props.dreamsnap.id,
-        date: form.date ? new Date(form.date) : new Date()
-      }
-
-     const save : DreamsnapDto = await $fetch<DreamsnapDto>(`/api/dreamsnap/${props.dreamsnap.id}`, {
-        method: 'PATCH',
-        body: formSend
+  try {
+    isLoading.value = true
+    const save : DreamsnapDto = await $fetch<DreamsnapDto>(url, {
+        method: props.dreamsnap ? 'PATCH' : 'POST',
+        body: formData
       })
+      toast.success(props.dreamsnap ? 'Dreamsnap modifié' : 'Dreamsnap ajouté')
+    close(save)
+  } catch (error:any) {
+    toast.error(error.data?.message)
+  }finally {
+    isLoading.value = false
+  }
 
-      close(save)
-    }
 
+}
+
+
+const deleteDreamsnap = async () => {
+  if (!props.dreamsnap) return;
+
+  try {
+    isLoading.value = true
+    await $fetch(`/api/dreamsnap/${props.dreamsnap.id}`, {
+      method: 'DELETE',
+      body: {checked: form.checked}
+    })
+    toast.success('Dreamsnap supprimé')
+    close(props.dreamsnap, true)
+  } catch (error:any) {
+    toast.error(error.data?.message)
+  } finally {
+    isLoading.value = false
   }
 }
+  
+
 
 </script>

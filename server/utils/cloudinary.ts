@@ -85,6 +85,7 @@ export const getPublicIdFromUrl = (url: string): string => {
     if (publicId) {
         publicId = publicId.replace(/^v\d+\//, '')
         publicId = publicId.replace(/\.[^/.]+$/, '')
+        publicId = decodeURIComponent(publicId);
         console.log(publicId)
         return publicId
 

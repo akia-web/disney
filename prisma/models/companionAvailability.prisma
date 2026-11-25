@@ -1,0 +1,8 @@
+model CompanionAvailability {
+  id          Int       @id @default(autoincrement())
+  day         String
+  from        String
+  to          String
+  companionId Int
+  companion   Companion @relation(fields: [companionId], references: [id], onDelete: Cascade)
+}

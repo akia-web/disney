@@ -1,0 +1,22 @@
+model Companion {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  image     String
+  jobId     Int
+  game     Game     @default(BASE_GAME)
+  region String
+  loveName String
+  loveImage String
+  availabilities  CompanionAvailability[]
+  CompanionUser CompanionUser[]
+  job       Job       @relation(fields: [jobId], references: [id])
+}
+
+enum Game {
+  BASE_GAME
+  DLC1
+  DLC2
+  DLC3
+  DLC4
+  ADVENTURE_PACK_1
+}

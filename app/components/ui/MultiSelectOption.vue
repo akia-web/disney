@@ -59,6 +59,7 @@ const dropdownRef = ref<HTMLElement | null>(null)
 const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node
 
+
     if (!dropdownRef.value?.contains(target)) {
         showTypeDropdown.value = false
     }

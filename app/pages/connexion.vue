@@ -111,13 +111,35 @@ const v$ = useVuelidate(rules, form, { $autoDirty: true });
 
 const showPassword = ref(false)
   const toast = useToast()
+
+const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+        register()
+    }
+
+};
+
+
 const register = async () => {
- const response = await auth.login(form)
- if(response){
-  toast.error(response)
- }else{
-  toast.success('Connexion réussie')
-    navigateTo('/')
- }
+  if(!v$?.value .$invalid){
+    
+    const response = await auth.login(form)
+    
+    if(response){
+      toast.error(response)
+    }else{
+      toast.success('Connexion réussie')
+        navigateTo('/')
+    }
+  }
 }
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeydown);
+});
+
 </script>

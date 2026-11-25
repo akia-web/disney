@@ -73,6 +73,7 @@ import type { CharacterDto } from '~/interfaces/characters-dto';
 import type { CharactersUserDto } from '~/interfaces/characters-user.dto';
 import type { EditCharacterDto } from '~/interfaces/edit-character.dto';
 import type { JobsDto } from '~/interfaces/jobs-dto';
+import { ref } from 'vue'
 
 const props = defineProps({
     showModal: Boolean,
@@ -96,7 +97,7 @@ onMounted(async () => {
 charactersList.value = await $fetch<CharacterDto[]>(`/api/character/all`)
 characterUser.value =  await $fetch<CharactersUserDto[]>(`/api/character-user/all`)
 
-missingCharacter.value = charactersList.value.filter(    (character) => !characterUser.value.some(
+missingCharacter.value = charactersList.value.filter((character) => !characterUser.value.some(
         (characterUser) => characterUser.character.id === character.id
 ))
 
@@ -125,7 +126,7 @@ const form = reactive({
 });
 
 const resetForm = () => {
-  selectedJob.value=undefined;
+  selectedJob.value =undefined;
   form.name = '';
   form.level = '';
   form.checked = false;

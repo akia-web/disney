@@ -9,18 +9,25 @@
                     </ClientOnly>          
             </button>
 
-            <PopupEditDreamsnap :showModal="showModal" 
+            <PopupEditDreamsnap v-if="showModal"
                             :title="titleModal"
                             v-model:dreamsnap="selectedDreamsnap"
                             @closeModal="handleCloseModal"/>
 
+             <DreamsnapDetail v-if="showDetails"
+                            :dreamsnaps="dreamsnaps"
+                            :dreamnap="selectedDreamsnap"
+                            @closeModal="handleCloseModal"/>
+            
+
         </div>
 
         
-        <div class="grid grid-cols-[repeat(auto-fill,400px)] justify-center gap-4 mt-4">
+        <div class="grid grid-cols-[repeat(auto-fill,390px)] justify-center gap-4 mt-4">
             <div v-for="dreamsnap in dreamsnaps"
             class="border rounded-lg p-2 text-card-color border-gold bg-white/90">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center" 
+                @click="selectDreamsnap(dreamsnap)">
                     <div>
                         <UiDate :date="dreamsnap.date.toString()"/>
                         <p class="text-sm">#{{ dreamsnap.rank }}</p>
@@ -34,9 +41,15 @@
                 
                 <img :src="dreamsnap.image" 
                     :alt="dreamsnap.theme"
+                    @click="selectDreamsnap(dreamsnap)"
                     class="w-full object-contain h-71.25">
-                <div>
+                <div class="flex justify-center gap-2 items-center"
+                @click="edit(dreamsnap)">
                     <p class="text-lg text-center">{{ dreamsnap.theme }}</p>
+                    <ClientOnly>
+                        <Icon name="bytesize:edit" 
+                                size="16"/>
+                    </ClientOnly>   
                 </div>
             </div>
         </div>
@@ -58,7 +71,7 @@ const showModal = ref(false)
 const titleModal = ref('')
 const dreamsnaps = ref<DreamsnapDto[]>([])
 const selectedDreamsnap= ref<DreamsnapDto>()
-
+const showDetails=ref<boolean>(false)
     
 onMounted(async ():Promise<void> =>{
     
@@ -70,18 +83,38 @@ onMounted(async ():Promise<void> =>{
    
 })
 
-const openModal = (title: string, dreamsnap?: DreamsnapDto):void =>{
-    titleModal.value = title
-    selectedDreamsnap.value = dreamsnap   
+const openModal = (title: string):void =>{
+    titleModal.value = title 
     showModal.value = true 
 }
 
-const handleCloseModal = (dreamsnap? : DreamsnapDto):void => {
+const edit = (dreamsnap:DreamsnapDto):void =>{
+    console.log('edit', dreamsnap)
+    selectedDreamsnap.value = dreamsnap
+    titleModal.value = 'Modifier un Dreamsnap'
+    showModal.value = true 
+}
+
+const selectDreamsnap = (dreamsnap:DreamsnapDto) => {
+    selectedDreamsnap.value = dreamsnap
+    showDetails.value =true
+}
+
+const handleCloseModal = (dreamsnap? : DreamsnapDto, isDeleted?: boolean):void => {
     showModal.value = false
     selectedDreamsnap.value = undefined
-    
-    if (dreamsnap && dreamsnap.id) {
-            const index = dreamsnaps.value.findIndex(
+    showDetails.value = false
+
+    if (isDeleted && dreamsnap) {
+        const index = dreamsnaps.value .findIndex(
+            c => c.id === dreamsnap.id
+        )
+
+        if (index !== -1) {
+            dreamsnaps.value .splice(index, 1)
+        }
+    }else if(dreamsnap && dreamsnap.id) {
+            const index = dreamsnaps.value .findIndex(
                 c => c.id === dreamsnap.id
             )
 

@@ -11,5 +11,5 @@ export interface CompanionDto{
     region: string;
     loveName: string;                  
     loveImage: string;
-    availability: CompanionAvailabilityDto[];
+    availabilities: CompanionAvailabilityDto[];
 }

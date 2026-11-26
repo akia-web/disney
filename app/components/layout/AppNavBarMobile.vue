@@ -7,7 +7,7 @@
                 <ClientOnly>
                 <Icon :name=item.iconName />
                 </ClientOnly>   
-                <p>{{item.name}}</p>
+                <p class="text-xs">{{item.name}}</p>
             </div>
             </NuxtLink>
 
@@ -27,7 +27,7 @@
                 <div class="flex items-center gap-2 flex-col ">
                                 <ClientOnly>
                                 <Icon @click="logout" name="cuida:power-outline" />
-                                <p>Logout</p>
+                                <p class="text-xs">Logout</p>
                                 </ClientOnly>
                 </div>
                     <NuxtLink :to="'/admin/personnages'" v-if="auth.user.role ==='ADMIN'">
@@ -35,7 +35,7 @@
                                             <ClientOnly>
                                             <Icon name="mdi-light:view-dashboard" />
                                             </ClientOnly>   
-                                            <p>Dash</p>
+                                            <p class="text-xs">Dash</p>
                         </div>
                     </NuxtLink>
                 

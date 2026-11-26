@@ -14,14 +14,15 @@
 
             <AdminEditCompanion v-if="showModal"
                                 :title="titleModal"
+                                :companion="selectedCompanion"
                                :jobs="jobs"
                                 @closeModal="handleCloseModal"/>
         </div>
-             <SearchBar v-model:elementTable="jobs"
-                        type="jobs"/>
+             <SearchBar v-model:elementTable="companions"
+                        type="companion"/>
 
             <div class="flex gap-4 flex-wrap justify-around">
-        <div v-for="item in jobs"
+        <div v-for="item in companions"
             class="border rounded-lg min-w-50 max-w-50 bg-white"
             @click="openModal('Modification', item)">
             <div class="flex justify-center p-2.5 rounded-tl-lg rounded-tr-lg">
@@ -38,6 +39,7 @@
 </template>
 <script lang=ts setup>
 import AdminEditCompanion from '~/components/popup/AdminEditCompanion.vue'
+import type { CompanionDto } from '~/interfaces/companion.dto'
 import type { JobsDto } from '~/interfaces/jobs-dto'
 
 definePageMeta({
@@ -47,31 +49,32 @@ definePageMeta({
 const auth = useAuthStore()
 const showModal = ref(false)
 const titleModal = ref('')
-const selectedJob= ref<JobsDto>()
+const selectedCompanion= ref<CompanionDto>()
 const jobs = ref<JobsDto[]>([])
+const companions = ref<CompanionDto[]>([])
 
-const openModal = (title: string, item?: JobsDto):void => {
+const openModal = (title: string, item?: CompanionDto):void => {
     titleModal.value = title
-    selectedJob.value = item   
+    selectedCompanion.value = item  
     showModal.value = true 
 }
 
-const handleCloseModal = (item? : JobsDto):void => {
+const handleCloseModal = (item? : CompanionDto):void => {
     showModal.value = false
-    selectedJob.value = undefined
+    selectedCompanion.value = undefined
     
     if (item && item.id) {
-            const index = jobs.value.findIndex(
+            const index = companions.value.findIndex(
                 c => c.id === item.id
             )
 
             if (index !== -1) {
-                jobs.value[index] = item
+                companions.value[index] = item
             } else {
-                jobs.value.push(item)
+                companions.value.push(item)
             }
 
-            jobs.value.sort((a, b) => 
+            companions.value.sort((a, b) => 
                 a.name.localeCompare(b.name)
             )
     }
@@ -80,7 +83,7 @@ const handleCloseModal = (item? : JobsDto):void => {
 
 onMounted(async () => {
     try {
-        const response = await $fetch('/api/jobs')
+        const response = await $fetch('/api/jobs/all')
         jobs.value = response as JobsDto[]
     } catch (error) {
         console.error('Erreur lors de la récupération des jobs:', error)

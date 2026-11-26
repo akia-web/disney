@@ -50,7 +50,7 @@
 
                   <label>Jours de présences </label>
                   <div class="flex gap-2 items-center mt-2">
-                      <div v-for="availability in form.availability" :key="availability.day">
+                      <div v-for="availability in form.availabilities" :key="availability.day">
                           <button class="bg-card-color text-white p-3 rounded-lg relative">
                             <p  @click.prevent="selectAvailability(availability)"> {{ availability.day }}: {{ availability.from }} - {{ availability.to }}</p>
                             
@@ -58,7 +58,7 @@
                               <Icon name="ic:baseline-cancel"
                                   size="16"
                                   class="absolute top-px right-px"
-                                  @click.prevent="form.availability = form.availability.filter(a => a !== availability); listDaysNotUsed.push(availability.day)"/>  
+                                  @click.prevent="form.availabilities = form.availabilities.filter(a => a !== availability); listDaysNotUsed.push(availability.day)"/>  
                               </ClientOnly>
                           </button>
                       </div>
@@ -154,7 +154,7 @@ const form = reactive({
   region: '',
   game: GameEnum.BASE_GAME,
   job: undefined as JobsDto | undefined,
-  availability: [] as CompanionAvailabilityDto[],
+  availabilities: [] as CompanionAvailabilityDto[],
 });
 
 const selectedAvailability = ref<CompanionAvailabilityDto | null>(null)
@@ -168,9 +168,17 @@ watch(
   () => props.companion,
   (newValue, oldValue) => {
     if(newValue){
+      console.log('lolo')
       form.name = newValue.name 
+      form.image = newValue.image
+      form.job = newValue.job
+      form.availabilities= newValue.availabilities
+      form.loveName = newValue.loveName
+      form.loveImage = newValue.loveImage
+      form.region = newValue.region
+      form.game = newValue.game
     }
-  }
+  }, {immediate:true}
 )
 
 const selectJob = (item: JobsDto) => {
@@ -182,8 +190,8 @@ const addAvailability = (companionAvailability? : CompanionAvailabilityDto):void
   console.log('companionAvailability', companionAvailability)
   
   if(companionAvailability && companionAvailability.day){
-    form.availability.push(companionAvailability)
-    const usedDays = form.availability.map(a => a.day)
+    form.availabilities.push(companionAvailability)
+    const usedDays = form.availabilities.map(a => a.day)
     listDaysNotUsed.value = days.filter(day => !usedDays.includes(day))
   }
 
@@ -196,44 +204,33 @@ const selectAvailability = (availability: CompanionAvailabilityDto) => {
 }
 
 const send = async () => {
-  console.log('form', form)
-  // if(!props.character){
-  //   const formData = new FormData()
+      const formSend  = {
+      name: form.name,
+      image: form.image,
+      loveName: form.loveName,
+      loveImage: form.loveImage,
+      checked: form.checked,
+      region: form.region,
+      game: form.game,
+      jobId: form.job?.id,
+      availabilities: form.availabilities
+    }
 
-  //   formData.append('name', form.name)
-  //   formData.append('checked', String(form.checked))
+  if(props.companion && props.companion.id){
+   const save : CompanionDto = await $fetch<CompanionDto>(`/api/admin/companion/${props.companion.id}`, {
+      method: 'PATCH',
+      body: formSend
+    })
 
-  //   if (file.value) {
-  //     formData.append('file', file.value )
-  //   }
+    close(save)
+  }else{
+   const save : CompanionDto = await $fetch<CompanionDto>(`/api/admin/companion/create`, {
+      method: 'POST',
+      body: formSend
+    })
 
-  //  const save : CharacterDto = await $fetch<CharacterDto>('/api/admin/character/create', {
-  //     method: 'POST',
-  //     body: formData
-  //   })
-
-  //   close(save)
-
-  // }else{
-
-  //   if(props.character && props.character.id){
-  //     const formSend : EditAdminCharacterDto = {
-  //       checked: form.checked,
-  //       name: form.name,
-  //       id: props.character.id
-  //     }
-
-  //    const save : CharacterDto = await $fetch<CharacterDto>(`/api/character/${props.character.id}`, {
-  //       method: 'PATCH',
-  //       body: formSend
-  //     })
-
-  //     close(save)
-  //   }
-
-  // }
-
-  
+    close(save)
+  } 
 
 }
 

@@ -23,14 +23,14 @@
                         <span>De:</span>
                         <select v-model="form.from" class="w-full border border-card-color rounded-lg p-2.5">
                             <option disabled :value="undefined">Sélectionner une heure</option>
-                            <option v-for="hour in hours" :key="hour" :value="hour">{{ hour }}</option>
+                            <option v-for="hour in hours" :key="hour" :value="hour">{{ hour }}h</option>
                         </select>
                     </div>
                     <div class="flex gap-1 items-center">
                         <span>A:</span>
                         <select v-model="form.to" class="w-full border border-card-color rounded-lg p-2.5">
                             <option disabled :value="undefined">Sélectionner une heure</option>
-                            <option v-for="hour in hours" :key="hour" :value="hour">{{ hour }}</option>
+                            <option v-for="hour in hours" :key="hour" :value="hour">{{ hour }}h</option>
                         </select>
                     </div>
 
@@ -68,7 +68,7 @@ import type { CompanionAvailabilityDto } from '~/interfaces/companionAvailabilit
         to: '',
     })
 
-    const hours=['minuit', '1h', '2h', '3h', '4h', '5h', '6h', '7h', '8h', '9h', '10h', '11h', 'midi', '13h', '14h', '15h', '16h', '17h', '18h', '19h', '20h', '21h', '22h', '23h']
+    const hours=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
 
 
     const send = () => {

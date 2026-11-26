@@ -17,4 +17,9 @@ export const navBarRoutes: navBarDto[] = [
         iconName: 'mdi-light:account',
         name: 'Persos'
     },
+    {
+        link: '/compagnons',
+        iconName: 'fluent-emoji-high-contrast:owl',
+        name: 'Compagnons'
+    },
 ]

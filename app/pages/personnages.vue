@@ -23,13 +23,13 @@
         
 
 
-            <div class="grid grid-cols-[repeat(auto-fill,170px)] justify-center gap-4">
+            <div class="grid grid-cols-[repeat(auto-fill,140px)] justify-center gap-4">
                 <div v-for="character in characters"
                     class="border rounded-lg min-w-37.5 bg-white/90 border-gold"
                     @click="openModal('Modification', character)">
                     <div class="flex justify-between bg-card-color pt-2.5 pb-2.5 rounded-tl-lg rounded-tr-lg">
-                        <p class="pl-2 text-white font-bold">{{ character.character.name }}</p>
-                        <p class="pr-2 text-white font-bold">{{ character.level }}</p>
+                        <p class="pl-2 text-white font-bold text-[10px] md:text-xs">{{ character.character.name }}</p>
+                        <p class="pr-2 text-white font-bold text-[10px] md:text-xs">{{ character.level }}</p>
                     </div>
                 
                     <div class="p-2.5 flex flex-col items-center">

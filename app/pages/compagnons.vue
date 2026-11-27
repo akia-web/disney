@@ -7,8 +7,8 @@
 
     <div class="grid grid-cols-[repeat(auto-fill,160px)] justify-center gap-4">
                 <div v-for="companion in companions"
-                    class="border rounded-lg min-w-37.5 bg-white/90 border-gold">
-                    <div class="flex justify-between items-center bg-card-color p2.5 rounded-tl-lg rounded-tr-lg">
+                    class="border rounded-lg bg-white/90 border-gold">
+                    <div class="flex justify-between items-center bg-card-color rounded-tl-lg rounded-tr-lg w-full">
                         <p class="pl-2 text-white font-bold">{{ companion.name }}</p>
 
                         <div>
@@ -27,13 +27,13 @@
                     </div>
                 
                     <div class="p-2.5 flex flex-col items-center">
-                        <img :src="companion.image" class="w-[100px]"
+                        <img :src="companion.image" class="w-[100px] h-[100px] object-contain"
                         :class="[companionsUser.some((element)=> element.companion.name === companion.name && element.isObtained)?'opacity-100' : 'opacity-40']" alt="">
                                                               
-                    <div class="flex gap-1 items-center justify-center">
+                        <div class="flex gap-1 items-center justify-center">
                             <img :src="companion.loveImage" class="w-[25px]"/>
                             <p class="text-xs">{{ companion.loveName }}</p>
-                    </div>
+                        </div>
                         <div v-if="companion.availabilities">
                             <p class="text-xs underline text-center">Prochaine apparition</p>
                             <div class="text-[10px] flex gap-1 items-center">
@@ -69,7 +69,6 @@ const form = reactive({
 
 const toggleObtained = async (companion : CompanionDto) => {
     const companionIsObtained = companionsUser.value.some((element) => element.companion.id ===companion.id)
-    console.log(companionIsObtained)
     if(!companionIsObtained){
         const save : CompanionUserDto = await $fetch<CompanionUserDto>('/api/companion-user/create', {
         method: 'POST',
@@ -106,36 +105,33 @@ const getNextAvailability = (availabilities: { day: string, from: string, to: st
     const currentDay = now.getDay()
     const currentTime = now.getHours() * 60 + now.getMinutes()
 
-const sorted = availabilities
-    .map(a => ({
-        ...a,
-        dayIndex: days.indexOf(a.day),
-        fromMinutes: Number(a.from) * 60
-    }))
-    .map(a => ({
-        ...a,
-        diff: (a.dayIndex - currentDay + 7) % 7
-    }))
-    .map(a => ({
-        ...a,
-        diff: a.diff === 0 ? 7 : a.diff
-    }))
-    .filter(a =>
-        a.diff > 0 ||
-        (
-            a.diff === 0 &&
-            (
-                a.from === a.to ||
-                Number(a.to) * 60 + 59 >= currentTime
-            )
-        )
-    )
-    .sort((a, b) => {
-        if (a.diff !== b.diff) return a.diff - b.diff
-        return a.fromMinutes - b.fromMinutes
-    })
+ const sorted = availabilities
+        .map(a => {
+            const dayIndex = days.indexOf(a.day)
+            let diff = (dayIndex - currentDay + 7) % 7
 
-    return sorted[0] ? `${sorted[0].day} ${sorted[0].diff === 7 ? 'prochain ' : ''} ${sorted[0].from === sorted[0].to ? 'toute la journée': `de ${sorted[0].from}h à ${sorted[0].to}h`}`: null
+            const isAllDay = a.from === a.to
+            const endTime = Number(a.to) * 60 + 59
+
+            // Si la disponibilité d'aujourd'hui est terminée,
+            // on reporte au même jour la semaine prochaine.
+            if (diff === 0 && !isAllDay && endTime < currentTime) {
+                diff = 7
+            }
+
+            return {
+                ...a,
+                diff,
+                fromMinutes: Number(a.from) * 60
+            }
+        })
+        .sort((a, b) => {
+            if (a.diff !== b.diff) return a.diff - b.diff
+            return a.fromMinutes - b.fromMinutes
+        })
+
+
+    return sorted[0] ? `${sorted[0].diff === 0? `Aujourd'hui`: sorted[0].day} ${sorted[0].diff === 7 ? 'prochain ' : ''} ${sorted[0].from === sorted[0].to ? 'toute la journée': `de ${sorted[0].from}h à ${sorted[0].to}h`}`: null
 }
 
 onMounted(async()=>{

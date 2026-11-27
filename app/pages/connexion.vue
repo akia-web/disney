@@ -2,7 +2,7 @@
   <div class="min-h-[calc(100vh-var(--mobileNav))] w-full flex justify-center items-center">
     <img src="~/assets/images/ddv-desktop.png" class="hidden md:block  h-[80vh] object-cover rounded-tl-xl rounded-bl-xl" alt="">
     
-    <div class="bg-white p-4 w-full md:w-[30%] md:min-w-120 rounded-lg md:rounded-tl-none md:rounded-bl-none h-[80vh]">
+    <div class="bg-white p-4 w-full md:w-[30%] md:min-w-120 rounded-lg md:rounded-tl-none md:rounded-bl-none min-h-[80vh]">
       <img src="~/assets/images/ddv-mobile.jpg" class="md:hidden rounded" alt="">
       <h1 class="text-center mt-4 mb-4">Connexion</h1>
 

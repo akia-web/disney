@@ -57,33 +57,68 @@
 
         <div class="w-full md:w-[55%]">
             <h2 class="text-center text-white mb-4 text-xl p-5">Présents aujourd'hui</h2>
-            <div class="flex gap-2 mb-6 items-center flex-wrap justify-center">
-
-                <UiMultiSelectOption
-                    v-model="selectedTypeAnimal"
-                    id="companions"
-                    placeholder="Tous les compagnons"
-                    :table="typeAnimals"
-                    @change="filtrerCompanion"
+            <div class="mb-1">
+                <input
+                    v-model="searchCompanion"
+                    type="text"
+                    placeholder="Rechercher un compagnon..."
+                    class="border border-gold w-full p-2.5 rounded-lg mt-4 mb-4 placeholder:gold text-card-color bg-white/90"
                 />
+            </div>
                 
                 <UiMultiSelectOption
                     v-model="selectedGame"
                     placeholder="Tous les jeux"
                     id="game"
                     :table="typeGame"
-                    @change="filtrerByGame"
+                    @change="filtrerCompanion"
                 />
 
-            </div>
-            <div class="grid grid-cols-[repeat(auto-fill,160px)] gap-4 justify-center  md:max-h-[70vh] overflow-y-auto custom-scrollbar">
-                        <div v-for="companion in animals" class="bg-white rounded-xl p-2 flex flex-col items-center justify-center">
-                                <h2 class="text-center text-xs mb-1">{{ companion.name }}</h2>
-                                <img :src="companion.image" class="w-[100px] h-[100px] object-contain" alt="">
-                                <p class="text-center text-xs font-semibold mt-2">{{ companion.presence?.hour === undefined? 'Toute la journée': companion.presence.hour }}</p>
-                                <p class="text-center text-xs">{{ companion.place }}</p>
-                                <p class="text-center text-xs italic">{{ companion.love }}</p>    
+
+            <div class="grid grid-cols-[repeat(auto-fill,160px)] justify-center gap-4 mt-4">
+                <div v-for="companion in filteredCompanionSearch"
+                    class="border rounded-lg bg-white/90 border-gold">
+                    <div class="flex justify-between items-center bg-card-color rounded-tl-lg rounded-tr-lg w-full">
+                        <p class="pl-2 text-white font-bold">{{ companion.name }}</p>
+
+                        <div>
+                            <ClientOnly @click="toggleObtained(companion.id)">
+                                 <Icon v-if="companonUser.some((element)=> element.companion.name === companion.name && element.isObtained)"
+                                        name="andrsrxn:heart-filled"  
+                                        class=" cursor-pointer pr-2 text-red-800"
+                                        size="25"/>
+                                 <Icon v-else
+                                        name="andrsrxn:heart"  
+                                        class=" cursor-pointer pr-2 text-light-grey"
+                                        size="25"/>
+                        </ClientOnly>
                         </div>
+
+                    </div>
+                                
+                                
+                                
+                    <div class="p-2.5 flex flex-col items-center relative">
+                        <p class="absolute top-1 left-1 text-[8px] border-1 bg-white font-semibold border-card-color rounded-full h-[35px] w-[35px] flex items-center justify-center text-center whitespace-pre-line"
+                        v-if="companion.game !== GameEnum.BASE_GAME">
+                            {{ translateGame(companion.game).replace(' ', '\n') }}
+                        </p>
+                        <img :src="companion.image" class="w-[100px] h-[100px] object-contain"
+                        :class="[companonUser.some((element)=> element.companion.name === companion.name && element.isObtained)?'opacity-100' : 'opacity-40']" alt="">
+                        <div class="flex gap-1 items-center justify-center mt-2">
+                            <img :src="companion.loveImage" class="w-[25px]"/>
+                            <p class="text-xs">{{ companion.loveName }}</p>
+                        </div>
+                        <p class="text-center text-xs font-semibold mt-2">{{ companion.presence.from === companion.presence.to? 'Toute la journée': `${companion.presence.from}h à ${companion.presence.to}h` }}</p>
+
+                    </div>
+                            
+                    <div class="flex justify-between items-center mr-2 ml-2 mb-1">
+                        <p class="text-[10px]">{{ companion.region }}</p>
+                        <img v-if="companion.job" :src="companion.job" class="w-[20px]" alt="">
+                    </div>
+                        
+            </div>
             </div>
         </div>
        
@@ -92,20 +127,25 @@
 
 </template>
 <script lang="ts" setup>
-import { companions } from '~/conf/companion';
+import { GameEnum } from '~/enum/game.enum';
+import type { CompanionUserDto } from '~/interfaces/companion-user.dto';
+import type { CompanionDto } from '~/interfaces/companion.dto';
 import type { taskDto } from '~/interfaces/task.dto';
 
-interface CompanionDto{
+interface FilteredCompanionDto{
     name: string;
-    presence: {day: string, hour?: string};
-    love: string;
-    place: string;
-    image: string
-
+    presence: {day: string, from: string, to: string};
+    loveName: string;
+    loveImage: string;
+    region: string;
+    image: string;
+    job: string
+    id?:number;
+    game: GameEnum
 }
 
 const typeAnimals = ["Lapin", "Écureuil", "Tortue", "Passereau", "Raton laveur", "Renard", "Corbeau", "Crocodile", "Singe", "Cobra", "Capybara", "Hibou", "Bébé dragon", "Pégase", "Oie", "Mouffette", "Abeille", "Hérission"  ]
-const typeGame = ["Jeu de base", "DLC 1", "DLC 2", "DLC 3", "DLC Winnie", "DLC 4"]
+const typeGame = Object.keys(GameEnum);
 const selectedTypeAnimal= ref<string[]>([])
 const selectedGame=ref<string[]>([])
 
@@ -113,17 +153,23 @@ const auth = useAuthStore()
 const tasks = ref<taskDto[]>([])
 const toast = useToast()
 
-const animals = ref<CompanionDto[]>([])
+const companonsList = ref<CompanionDto[]>([])
+const companonUser = ref<CompanionUserDto[]>([])
+const companonFiltered = ref<FilteredCompanionDto[]>([])
 
 const form = reactive({
   description: '',
   checked: false
 });
 
+const searchCompanion = ref('')
     
 onMounted(async ():Promise<void> =>{
     if(auth.user){
          tasks.value = await $fetch<taskDto[]>('/api/task/all')
+         companonsList.value = await $fetch<CompanionDto[]>('/api/companion/all')
+         companonUser.value = await $fetch<CompanionUserDto[]>('/api/companion-user/all')
+         typeAnimals.sort((a, b) =>a.localeCompare(b, 'fr'))
     }else{
         navigateTo('connexion')
     }
@@ -132,71 +178,102 @@ onMounted(async ():Promise<void> =>{
    
 })
 
-const filtrerCompanion = () => {
-    animals.value = []
-    selectedGame.value=[]
-
-    const today = new Date().toLocaleDateString(navigator.language, {
-        weekday: 'long'
-    })
-
-    const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1)
-
-    companions.forEach((companion) => {
-        const companionDay = companion.presence.find(
-            (jour) => jour.day === todayCapitalized
-        )
-
-        if (
-            companionDay &&
-            (
-                selectedTypeAnimal.value.length === 0 ||
-                selectedTypeAnimal.value.some(type => companion.name.includes(type))
-            )
-        ) {
-            animals.value.push({
-                name: companion.name,
-                presence: companionDay,
-                love: companion.love,
-                place: companion.place,
-                image: companion.image
-            })
+const toggleObtained = async (companionId? : number) => {
+    const companionIsObtained = companonUser.value.some((element) => element.companion.id ===companionId)
+    if(!companionIsObtained){
+        const save : CompanionUserDto = await $fetch<CompanionUserDto>('/api/companion-user/create', {
+        method: 'POST',
+        body: {
+            companionId: companionId,
+            checked: form.checked
         }
-    })
+        })
+        companonUser.value.push(save)
+    }else{
+        await $fetch<CompanionUserDto>(`/api/companion-user/${companionId}`, {
+        method: 'DELETE',
+        body: {
+            checked: form.checked
+        }
+        })
+
+        companonUser.value = companonUser.value.filter((element)=> element.companion.id !== companionId)
+    }
 }
 
+const normalizeText = (text: string) => {
+    return text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+}
 
-const filtrerByGame = () => {
-    animals.value = []
-    selectedTypeAnimal.value=[]
+const filteredCompanionSearch = computed(() => {
+    const search = normalizeText(searchCompanion.value)
 
-    const today = new Date().toLocaleDateString(navigator.language, {
+    if (!search) return companonFiltered.value
+
+    return companonFiltered.value.filter(companion =>
+        normalizeText(companion.name).includes(search)
+    )
+})
+
+
+
+
+const filtrerCompanion = () => {
+    companonFiltered.value = []
+
+    const today = new Date().toLocaleDateString('fr-FR', {
         weekday: 'long'
     })
 
     const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1)
 
-    companions.forEach((companion) => {
-        const companionDay = companion.presence.find(
-            (jour) => jour.day === todayCapitalized
-        )
-
-        if (
-            companionDay &&
-            (
-                selectedGame.value.length === 0 ||
-                selectedGame.value.some(type => companion.type.includes(type))
+    companonFiltered.value = companonsList.value
+        .filter(companion => {
+            const isAvailableToday = companion.availabilities.some(
+                jour => jour.day === todayCapitalized
             )
-        ) {
-            animals.value.push({
-                name: companion.name,
-                presence: companionDay,
-                love: companion.love,
-                place: companion.place,
-                image: companion.image
-            })
-        }
-    })
+
+            const matchAnimal = selectedTypeAnimal.value.length === 0 ||
+            selectedTypeAnimal.value.some(type =>
+                normalizeText(companion.name).includes(normalizeText(type))
+            )
+            const matchGame = selectedGame.value.length === 0 ||
+                selectedGame.value.some(game => companion.game.includes(game))
+
+            return isAvailableToday && matchAnimal && matchGame
+        })
+        .map(companion => ({
+            name: companion.name,
+            presence: companion.availabilities.find(
+                jour => jour.day === todayCapitalized
+            )!,
+            loveName: companion.loveName,
+            loveImage: companion.loveImage,
+            region: companion.region,
+            image: companion.image,
+            job: companion.job.image,
+            id: companion.id,
+            game: companion.game
+        }))
+        .sort((a, b) => {
+            const aExists = companonUser.value.some(
+                user => user.companion.name === a.name
+            )
+
+            const bExists = companonUser.value.some(
+                user => user.companion.name === b.name
+            )
+
+            if (aExists !== bExists) {
+                return Number(aExists) - Number(bExists)
+            }
+
+            return a.name.localeCompare(b.name, 'fr')
+        })
 }
 
 

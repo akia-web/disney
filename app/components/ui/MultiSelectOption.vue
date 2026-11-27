@@ -26,7 +26,7 @@
                 v-model="selectedTypeAnimal"
                 @change="filtrerCompanion"
             >
-            {{ value }}
+            {{ id==='game'? translateGame(value as GameEnum): value }}
         </label>
     </div>
 </div>
@@ -35,6 +35,8 @@
 
 </template>
 <script lang="ts" setup>
+import type { GameEnum } from '~/enum/game.enum';
+
 
     const props = defineProps({
     table: Array as PropType<string[]>,

@@ -1,12 +1,18 @@
 <template>
     <h1 class="text-lg text-gold font-bold">Compagnons</h1>
-        <SearchBar v-model:elementTable="companions"
-                type="companion" v-model:resetFilter="resetFilter"/>
+        <div class="mb-1">
+                        <input
+                            v-model="searchCompanion"
+                            type="text"
+                            placeholder="Rechercher un compagnon..."
+                            class="border border-gold w-full p-2.5 rounded-lg mt-4 mb-4 placeholder:gold text-card-color bg-white/90"
+                        />
+        </div>
         
         <input type="checkbox" v-model="form.checked" class="opacity-0">
 
     <div class="grid grid-cols-[repeat(auto-fill,160px)] justify-center gap-4">
-                <div v-for="companion in companions"
+                <div v-for="companion in filteredCompanionSearch"
                     class="border rounded-lg bg-white/90 border-gold">
                     <div class="flex justify-between items-center bg-card-color rounded-tl-lg rounded-tr-lg w-full">
                         <p class="pl-2 text-white font-bold">{{ companion.name }}</p>
@@ -26,7 +32,11 @@
 
                     </div>
                 
-                    <div class="p-2.5 flex flex-col items-center">
+                    <div class="p-2.5 flex flex-col items-center relative">
+                        <p class="absolute top-1 left-1 text-[8px] border-1 bg-white font-semibold border-card-color rounded-full h-[35px] w-[35px] flex items-center justify-center text-center whitespace-pre-line"
+                        v-if="companion.game !== GameEnum.BASE_GAME">
+                            {{ translateGame(companion.game).replace(' ', '\n') }}
+                        </p>
                         <img :src="companion.image" class="w-[100px] h-[100px] object-contain"
                         :class="[companionsUser.some((element)=> element.companion.name === companion.name && element.isObtained)?'opacity-100' : 'opacity-40']" alt="">
                                                               
@@ -48,7 +58,7 @@
                     
 
                     <div class="flex justify-between items-center mr-2 ml-2 mb-1">
-                        <p class="text-xs">{{ companion.region }}</p>
+                        <p class="text-[10px]">{{ companion.region }}</p>
                         <img v-if="companion.job" :src="companion.job.image" class="w-[20px]" alt="">
                     </div>
                 </div>
@@ -56,12 +66,14 @@
             </div>
 </template>
 <script lang="ts" setup>
+import { GameEnum } from '~/enum/game.enum';
 import type { CompanionUserDto } from '~/interfaces/companion-user.dto';
 import type { CompanionDto } from '~/interfaces/companion.dto';
 
 const companionsUser = ref<CompanionUserDto[]>([])
 const companions = ref<CompanionDto[]>([])
 const resetFilter = ref(false)
+const searchCompanion = ref('')
 
 const form = reactive({
   checked: false
@@ -112,9 +124,6 @@ const getNextAvailability = (availabilities: { day: string, from: string, to: st
 
             const isAllDay = a.from === a.to
             const endTime = Number(a.to) * 60 + 59
-
-            // Si la disponibilité d'aujourd'hui est terminée,
-            // on reporte au même jour la semaine prochaine.
             if (diff === 0 && !isAllDay && endTime < currentTime) {
                 diff = 7
             }
@@ -136,5 +145,27 @@ const getNextAvailability = (availabilities: { day: string, from: string, to: st
 
 onMounted(async()=>{
    companionsUser.value =  await $fetch('/api/companion-user/all') 
+   companions.value = await $fetch('/api/companion/all') 
+
 })
+
+const normalizeText = (text: string) => {
+    return text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+}
+
+const filteredCompanionSearch = computed(() => {
+    const search = normalizeText(searchCompanion.value)
+
+    if (!search) return companions.value
+
+    return companions.value.filter(companion =>
+        normalizeText(companion.name).includes(search)
+    )
+})
+
+
 </script>

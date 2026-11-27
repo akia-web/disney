@@ -26,9 +26,9 @@ export default defineEventHandler(async (event) => {
     if (search) {
         where.name = {
 
-                contains: search,
-                mode: 'insensitive'
-            
+            contains: search,
+            mode: 'insensitive'
+
         }
     }
 
@@ -38,10 +38,10 @@ export default defineEventHandler(async (event) => {
             job: true,
             availabilities: true
         },
-        orderBy: 
-            [
-                { region:'asc' },
-                { name:  'asc' }
+        orderBy:
+            [{ game: 'asc' },
+            { region: 'asc' },
+            { name: 'asc' }
             ]
 
     })

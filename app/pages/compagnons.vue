@@ -41,7 +41,7 @@
                         :class="[companionsUser.some((element)=> element.companion.name === companion.name && element.isObtained)?'opacity-100' : 'opacity-40']" alt="">
                                                               
                         <div class="flex gap-1 items-center justify-center">
-                            <img :src="companion.loveImage" class="w-[25px]"/>
+                            <img :src="companion.loveImage" class="w-[25px] h-[25px] object-contain"/>
                             <p class="text-xs">{{ companion.loveName }}</p>
                         </div>
                         <div v-if="companion.availabilities">
@@ -59,7 +59,7 @@
 
                     <div class="flex justify-between items-center mr-2 ml-2 mb-1">
                         <p class="text-[10px]">{{ companion.region }}</p>
-                        <img v-if="companion.job" :src="companion.job.image" class="w-[20px]" alt="">
+                        <img v-if="companion.job" :src="companion.job.image" class="w-[20px] h-[20px] object-contain " alt="">
                     </div>
                 </div>
 

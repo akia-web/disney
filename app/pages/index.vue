@@ -78,8 +78,8 @@
             <div class="grid grid-cols-[repeat(auto-fill,160px)] justify-center gap-4 mt-4">
                 <div v-for="companion in filteredCompanionSearch"
                     class="border rounded-lg bg-white/90 border-gold">
-                    <div class="flex justify-between items-center bg-card-color rounded-tl-lg rounded-tr-lg w-full">
-                        <p class="pl-2 text-white font-bold">{{ companion.name }}</p>
+                    <div class="flex justify-between items-center bg-card-color rounded-tl-lg min-h-[60px] rounded-tr-lg w-full">
+                        <p class="pl-2 text-white font-bold text-xs">{{ companion.name }}</p>
 
                         <div>
                             <ClientOnly @click="toggleObtained(companion.id)">
@@ -106,7 +106,7 @@
                         <img :src="companion.image" class="w-[100px] h-[100px] object-contain"
                         :class="[companonUser.some((element)=> element.companion.name === companion.name && element.isObtained)?'opacity-100' : 'opacity-40']" alt="">
                         <div class="flex gap-1 items-center justify-center mt-2">
-                            <img :src="companion.loveImage" class="w-[25px]"/>
+                            <img :src="companion.loveImage" class="w-[20px] h-[20px] object-contain"/>
                             <p class="text-xs">{{ companion.loveName }}</p>
                         </div>
                         <p class="text-center text-xs font-semibold mt-2">{{ companion.presence.from === companion.presence.to? 'Toute la journée': `${companion.presence.from}h à ${companion.presence.to}h` }}</p>

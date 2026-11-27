@@ -117,13 +117,18 @@ const getNextAvailability = (availabilities: { day: string, from: string, to: st
     const currentDay = now.getDay()
     const currentTime = now.getHours() * 60 + now.getMinutes()
 
- const sorted = availabilities
+    const sorted = availabilities
         .map(a => {
             const dayIndex = days.indexOf(a.day)
             let diff = (dayIndex - currentDay + 7) % 7
 
             const isAllDay = a.from === a.to
-            const endTime = Number(a.to) * 60 + 59
+
+            // 00h en heure de fin correspond à minuit (24h)
+            const endTime = a.to === '00' && !isAllDay
+                ? 1440
+                : Number(a.to) * 60 + 59
+
             if (diff === 0 && !isAllDay && endTime < currentTime) {
                 diff = 7
             }
@@ -138,6 +143,7 @@ const getNextAvailability = (availabilities: { day: string, from: string, to: st
             if (a.diff !== b.diff) return a.diff - b.diff
             return a.fromMinutes - b.fromMinutes
         })
+
 
 
     return sorted[0] ? `${sorted[0].diff === 0? `Aujourd'hui`: sorted[0].day} ${sorted[0].diff === 7 ? 'prochain ' : ''} ${sorted[0].from === sorted[0].to ? 'toute la journée': `de ${sorted[0].from}h à ${sorted[0].to}h`}`: null

@@ -11,22 +11,22 @@
         
         <input type="checkbox" v-model="form.checked" class="opacity-0">
 
-    <div class="grid grid-cols-[repeat(auto-fill,160px)] justify-center gap-4">
+    <div class="grid grid-cols-[repeat(auto-fill,150px)] justify-center gap-2">
                 <div v-for="companion in filteredCompanionSearch"
                     class="border rounded-lg bg-white/90 border-gold">
-                    <div class="flex justify-between items-center bg-card-color p-1 rounded-tl-lg min-h-[60px] rounded-tr-lg w-full">
-                        <p class="pl-2 text-white font-bold text-xs">{{ companion.name }}</p>
+                    <div class="flex justify-between items-center bg-card-color p-1 rounded-tl-lg min-h-[50px] rounded-tr-lg w-full">
+                        <p class="pl-2 text-white font-bold text-[10px]">{{ companion.name }}</p>
 
                         <div>
                             <ClientOnly @click="toggleObtained(companion)">
                                  <Icon v-if="companionsUser.some((element)=> element.companion.name === companion.name && element.isObtained)"
                                         name="andrsrxn:heart-filled"  
                                         class=" cursor-pointer pr-2 text-red-800"
-                                        size="25"/>
+                                        size="30"/>
                                  <Icon v-else
                                         name="andrsrxn:heart"  
                                         class=" cursor-pointer pr-2 text-light-grey"
-                                        size="25"/>
+                                        size="30"/>
                         </ClientOnly>
                         </div>
 
@@ -37,14 +37,20 @@
                         v-if="companion.game !== GameEnum.BASE_GAME">
                             {{ translateGame(companion.game).replace(' ', '\n') }}
                         </p>
+
+                        <ClientOnly v-if="withRain.includes(companion.name)" class="absolute right-1 top-1">
+                            <Icon name="bi:cloud-rain-heavy" 
+                                    size="20"/>
+                        </ClientOnly>
+
                         <img :src="companion.image" class="w-[100px] h-[100px] object-contain"
                         :class="[companionsUser.some((element)=> element.companion.name === companion.name && element.isObtained)?'opacity-100' : 'opacity-40']" alt="">
                                                               
-                        <div class="flex gap-1 items-center justify-center">
+                        <div class="flex gap-1 items-center justify-center mt-2">
                             <img :src="companion.loveImage" class="w-[20px] h-[20px] object-contain"/>
                             <p class="text-xs">{{ companion.loveName }}</p>
                         </div>
-                        <div v-if="companion.availabilities">
+                        <div v-if="companion.availabilities" class="mt-2">
                             <p class="text-xs underline text-center">Prochaine apparition</p>
                             <div class="text-[10px] flex gap-1 items-center">
                                 <ClientOnly>
@@ -72,8 +78,9 @@ import type { CompanionDto } from '~/interfaces/companion.dto';
 
 const companionsUser = ref<CompanionUserDto[]>([])
 const companions = ref<CompanionDto[]>([])
-const resetFilter = ref(false)
 const searchCompanion = ref('')
+
+const withRain = ['Mouffette rayée']
 
 const form = reactive({
   checked: false

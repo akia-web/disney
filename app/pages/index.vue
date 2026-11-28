@@ -75,7 +75,7 @@
                 />
 
 
-            <div class="grid grid-cols-[repeat(auto-fill,160px)] justify-center gap-4 mt-4">
+            <div class="grid grid-cols-[repeat(auto-fill,160px)] justify-center gap-4 mt-4 md:max-h-[60vh] overflow-y-auto custom-scrollbar">
                 <div v-for="companion in filteredCompanionSearch"
                     class="border rounded-lg bg-white/90 border-gold">
                     <div class="flex justify-between items-center bg-card-color rounded-tl-lg min-h-[60px] rounded-tr-lg w-full">

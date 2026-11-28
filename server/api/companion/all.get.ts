@@ -40,8 +40,9 @@ export default defineEventHandler(async (event) => {
         },
         orderBy:
             [{ game: 'asc' },
+            { name: 'asc' },
             { region: 'asc' },
-            { name: 'asc' }
+
             ]
 
     })
